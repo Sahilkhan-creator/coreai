@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Core AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#09090b;
+      --panel:#111118;
+      --panel2:#0a0a0f;
+      --text:#ffffff;
+      --muted:#a1a1aa;
+      --muted2:#71717a;
+      --border:rgba(255,255,255,.08);
+      --border2:rgba(255,255,255,.05);
+      --violet:#7c3aed;
+      --violet2:#8b5cf6;
+      --blue:#2563eb;
+      --orange:#f97316;
+      --green:#10b981;
+      --purple:#a855f7;
+      --pink:#ec4899;
+      --cyan:#06b6d4;
+      --radius:22px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%}
+    body{
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      overflow-x:hidden;
+    }
+    a{color:inherit;text-decoration:none}
+    .page{position:relative;min-height:100vh;background:radial-gradient(circle at 20% 10%, rgba(124,58,237,.12), transparent 28%), radial-gradient(circle at 80% 90%, rgba(37,99,235,.10), transparent 26%), var(--bg);}
+    .noise{position:fixed;inset:0;pointer-events:none;opacity:.03;mix-blend:overlay;background-image:url('https://grainy-gradients.vercel.app/noise.svg')}
+    .wrap{position:relative;z-index:2;width:min(1180px,calc(100% - 48px));margin:0 auto}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0;position:relative;z-index:5}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:28px;letter-spacing:-.04em}
+    .logo{width:40px;height:40px;border-radius:14px;background:linear-gradient(135deg,var(--violet),#3b82f6);display:grid;place-items:center;box-shadow:0 0 15px rgba(124,58,237,.3)}
+    .logo svg{width:24px;height:24px;fill:#fff}
+    .navlinks{display:flex;align-items:center;gap:16px}
+    .ghost,.whitebtn,.outline{
+      border-radius:999px;border:1px solid var(--border);padding:12px 18px;font-weight:600;transition:.2s ease;display:inline-flex;align-items:center;gap:10px
+    }
+    .ghost{color:#c4c4cc;background:transparent}
+    .ghost:hover{background:rgba(255,255,255,.05);color:#fff}
+    .whitebtn{background:#fff;color:#000;border-color:transparent}
+    .whitebtn:hover{background:#e4e4e7}
+    .outline{background:rgba(17,17,24,.5);color:#fff}
+    .outline:hover{background:#1f1f2e}
+    .login{color:#a1a1aa;font-size:15px;font-weight:600}
+    .login:hover{color:#fff}
+
+    .hero{padding:110px 0 70px;text-align:center;max-width:980px}
+    .pill{
+      display:inline-flex;align-items:center;gap:10px;padding:8px 14px;border-radius:999px;
+      background:rgba(255,255,255,.05);border:1px solid var(--border);color:#d4d4d8;font-size:14px;margin-bottom:28px
+    }
+    .dot{width:8px;height:8px;border-radius:999px;background:var(--violet2);box-shadow:0 0 16px rgba(139,92,246,.7)}
+    h1{
+      margin:0 0 22px;font-size:clamp(3.2rem,8vw,6.6rem);line-height:1.02;letter-spacing:-.08em;font-weight:900;
+      background:linear-gradient(180deg,#fff,rgba(255,255,255,.58));-webkit-background-clip:text;background-clip:text;color:transparent
+    }
+    .sub{margin:0 auto 36px;max-width:860px;font-size:clamp(1.1rem,2vw,1.45rem);line-height:1.7;color:#a1a1aa}
+    .cta{display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
+    .cta .whitebtn,.cta .outline{height:56px;padding:0 26px;font-size:18px}
+
+    .mock{padding:24px 0 96px}
+    .window{
+      border:1px solid var(--border);background:rgba(17,17,24,.82);backdrop-filter:blur(18px);
+      border-radius:28px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.52)
+    }
+    .bar{height:48px;border-bottom:1px solid var(--border2);display:flex;align-items:center;padding:0 14px;background:rgba(10,10,15,.8)}
+    .lights{display:flex;gap:8px}
+    .light{width:12px;height:12px;border-radius:50%}
+    .red{background:rgba(239,68,68,.8)} .yellow{background:rgba(234,179,8,.8)} .green{background:rgba(34,197,94,.8)}
+    .url{margin:0 auto;font-size:12px;color:#71717a;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:rgba(255,255,255,.05);padding:6px 10px;border-radius:8px}
+    .mockbody{padding:32px 32px 0}
+    .chatrow{display:flex;justify-content:flex-end;margin-bottom:22px}
+    .bubble{
+      max-width:78%;padding:16px 18px;border-radius:22px 22px 6px 22px;background:linear-gradient(135deg,var(--violet),#2563eb);box-shadow:0 10px 30px rgba(0,0,0,.18)
+    }
+    .bubble p{margin:0;font-weight:600;line-height:1.55}
+    .workflow{
+      max-width:78%;border:1px solid var(--border2);background:#1a1a24;border-radius:22px;padding:18px;position:relative;overflow:hidden
+    }
+    .workflow:before{content:"";position:absolute;left:0;top:0;width:4px;height:100%;background:linear-gradient(180deg,var(--violet2),#3b82f6)}
+    .log{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:#d4d4d8}
+    .step{display:flex;align-items:center;gap:10px;margin:12px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .step .label{width:58px;flex:0 0 58px;font-weight:700}
+    .step .task{flex:1;color:#cbd5e1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .status.done{color:#71717a}.status.running{color:#a855f7;animation:pulse 1.4s infinite}.status.pending{color:#71717a}
+    .spin{width:14px;height:14px;border:2px solid #22c55e;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite}
+    .divider{height:1px;background:rgba(255,255,255,.05);margin:16px 0}
+    .skeleton{opacity:.35;animation:pulse 1.6s infinite}
+    .skeleton div{height:14px;background:rgba(255,255,255,.10);border-radius:6px;margin:10px 0}
+    .skeleton .w1{width:72%}.skeleton .w2{width:100%}.skeleton .w3{width:84%}
+    .fade{height:84px;margin-top:-52px;background:linear-gradient(to top,var(--panel),transparent);position:relative;z-index:2}
+
+    .section{padding:92px 0}
+    .section.dark{background:var(--panel2);border-top:1px solid var(--border2);border-bottom:1px solid var(--border2)}
+    .center{text-align:center}
+    .head{max-width:760px;margin:0 auto 40px}
+    .head h2{margin:0 0 14px;font-size:clamp(2.2rem,4vw,3.4rem);letter-spacing:-.06em;line-height:1.05}
+    .head p{margin:0;color:#a1a1aa;font-size:18px;line-height:1.7}
+    .grid{
+      display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px
+    }
+    .card{
+      padding:24px;border-radius:24px;background:var(--panel);border:1px solid var(--border2);transition:.2s ease
+    }
+    .card:hover{border-color:rgba(124,58,237,.3);transform:translateY(-2px)}
+    .icon{
+      width:48px;height:48px;border-radius:14px;background:rgba(255,255,255,.05);display:grid;place-items:center;margin-bottom:18px
+    }
+    .icon svg{width:24px;height:24px}
+    .card h3{margin:0 0 10px;font-size:20px}
+    .card p{margin:0;color:#a1a1aa;line-height:1.65}
+    .steps{max-width:880px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+    .steprow{display:flex;align-items:flex-start;gap:22px}
+    .num{
+      width:64px;height:64px;border-radius:999px;background:var(--panel);border:1px solid rgba(124,58,237,.3);
+      display:grid;place-items:center;font-size:26px;font-weight:900;color:#a78bfa;flex:0 0 auto;box-shadow:0 0 20px rgba(124,58,237,.08)
+    }
+    .stepcopy h3{margin:6px 0 8px;font-size:28px}
+    .stepcopy p{margin:0;color:#a1a1aa;font-size:18px;line-height:1.7}
+    .cta2{padding:96px 0 110px;position:relative;overflow:hidden}
+    .cta2:before{content:"";position:absolute;inset:0;background:rgba(124,58,237,.05)}
+    .cta2 .wrap{position:relative;z-index:2}
+    .cta2 h2{margin:0 0 18px;font-size:clamp(2.6rem,5vw,4.6rem);letter-spacing:-.08em;line-height:1.05}
+    .cta2 p{margin:0 auto 26px;max-width:760px;color:#a1a1aa;font-size:19px;line-height:1.7}
+
+    footer{padding:24px 0 34px;text-align:center;color:#71717a;font-size:14px;border-top:1px solid var(--border2);background:var(--panel2)}
+    .icons{display:flex;gap:10px;align-items:center}
+    .iconbtn{
+      width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid var(--border2);
+      display:grid;place-items:center
+    }
+    .iconbtn svg{width:18px;height:18px;fill:currentColor}
+    .sr{position:absolute;left:-9999px}
+
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes pulse{50%{opacity:.55}}
+    @media (max-width: 920px){
+      .grid{grid-template-columns:1fr 1fr}
+      .nav{gap:14px;flex-wrap:wrap}
+      .navlinks{flex-wrap:wrap;justify-content:flex-end}
+      .hero{padding-top:84px}
+      .bubble,.workflow{max-width:100%}
+    }
+    @media (max-width: 640px){
+      .wrap{width:calc(100% - 28px)}
+      .grid{grid-template-columns:1fr}
+      .steprow{gap:16px}
+      .num{width:52px;height:52px;font-size:22px}
+      .stepcopy h3{font-size:22px}
+      .nav{justify-content:center}
+      .navlinks{justify-content:center}
+      .brand{font-size:24px}
+      .bubble{padding:14px}
+      .mockbody{padding:18px 18px 0}
+      .hero{padding:70px 0 52px}
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="noise"></div>
+
+    <div class="wrap">
+      <nav class="nav">
+        <a class="brand" href="#">
+          <span class="logo" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 2c2.8 0 5 2.2 5 5v1h1.2c1.6 0 2.8 1.3 2.8 2.8v2.4c0 1.6-1.3 2.8-2.8 2.8H17v1c0 2.8-2.2 5-5 5s-5-2.2-5-5v-1H5.8C4.2 18 3 16.7 3 15.2v-2.4C3 11.2 4.2 10 5.8 10H7V9c0-2.8 2.2-5 5-5Zm0 2C10.3 4 9 5.3 9 7v3h6V7c0-1.7-1.3-3-3-3Zm-3 7H5.8c-.5 0-.8.4-.8.8v2.4c0 .4.4.8.8.8H9V11Zm11 0H15v4h2.2c.5 0 .8-.4.8-.8v-2.4c0-.4-.4-.8-.8-.8ZM9 17v1c0 1.7 1.3 3 3 3s3-1.3 3-3v-1H9Z"/></svg>
+          </span>
+          Core AI
+        </a>
+        <div class="navlinks">
+          <a class="ghost" href="#features">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            Features
+          </a>
+          <a class="ghost" href="#how">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v18M3 12h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            Workflow
+          </a>
+          <a class="login" href="#login">Log in</a>
+          <a class="whitebtn" href="chat.html">Launch App</a>
+        </div>
+      </nav>
+
+      <main>
+        <section class="hero">
+          <div class="pill"><span class="dot"></span>Core AI v2.0 is now live</div>
+          <h1>Multiple AIs.<br>One Core Intelligence.</h1>
+          <p class="sub">Research with Gemini, build with Claude, reason with GPT, analyze with Kimi — all working together automatically to deliver uncompromising results.</p>
+          <div class="cta">
+            <a class="whitebtn" href="chat.html">Start Free
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h12m-5-5 5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <a class="outline" href="#features">Explore Features</a>
+          </div>
+        </section>
+
+        <section class="mock">
+          <div class="window">
+            <div class="bar">
+              <div class="lights"><span class="light red"></span><span class="light yellow"></span><span class="light green"></span></div>
+              <div class="url">core-ai.app/chat</div>
+            </div>
+            <div class="mockbody">
+              <div class="chatrow">
+                <div class="bubble">
+                  <p>Build a scalable microservices architecture for a fintech app, focusing on high-throughput transaction processing.</p>
+                </div>
+              </div>
+              <div class="workflow">
+                <div class="log">
+                  <div class="step"><span class="label" style="color:#60a5fa">Gemini</span><span class="task">Researching latest high-throughput paradigms</span><span class="status done">[done]</span></div>
+                  <div class="step"><span class="label" style="color:#fb923c">Claude</span><span class="task">Designing core system architecture</span><span class="status done">[done]</span></div>
+                  <div class="step"><span class="spin"></span><span class="label" style="color:#4ade80">GPT</span><span class="task">Reviewing security & idempotency</span><span class="status running">[running]</span></div>
+                  <div class="step" style="opacity:.5"><span style="width:14px;height:14px;border:2px solid #52525b;border-radius:50%"></span><span class="label" style="color:#c084fc">Kimi</span><span class="task">Analyzing edge cases</span><span class="status pending">[pending]</span></div>
+                </div>
+                <div class="divider"></div>
+                <div class="skeleton"><div class="w1"></div><div class="w2"></div><div class="w3"></div></div>
+              </div>
+            </div>
+            <div class="fade"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <section id="features" class="section dark">
+      <div class="wrap">
+        <div class="head center">
+          <h2>Uncompromising Intelligence</h2>
+          <p>Why choose one model when you can have the hive mind? Core AI orchestration extracts the best traits of each frontier model.</p>
+        </div>
+
+        <div class="grid">
+          <article class="card">
+            <div class="icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3l8 4v10l-8 4-8-4V7l8-4z" stroke="#a78bfa" stroke-width="2"/><path d="M12 3v18" stroke="#a78bfa" stroke-width="2"/></svg></div>
+            <h3>Multi-Agent Collaboration</h3>
+            <p>Four frontier models work together on every prompt, cross-checking and enhancing outputs.</p>
+          </article>
+          <article class="card">
+            <div class="icon"><svg viewBox="0 0 24 24" fill="none"><path d="M13 2 4 14h7l-1 8 10-14h-7l0-6z" stroke="#60a5fa" stroke-width="2" stroke-linejoin="round"/></svg></div>
+            <h3>Automatic Model Selection</h3>
+            <p>Core AI automatically routes specific tasks to the model best suited for it.</p>
+          </article>
+          <article class="card">
+            <div class="icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21s7-4.4 7-10V7l-7-4-7 4v4c0 5.6 7 10 7 10z" stroke="#fb923c" stroke-width="2"/></svg></div>
+            <h3>AI Debate Mode</h3>
+            <p>Models debate complex problems to find the most mathematically and logically sound solution.</p>
+          </article>
+          <article class="card">
+            <div class="icon"><svg viewBox="0 0 24 24" fill="none"><path d="M4 20h16M7 16h10M9 4h6l2 8H7l2-8zm2 8-1 8m5-8 1 8" stroke="#4ade80" stroke-width="2" stroke-linecap="round"/></svg></div>
+            <h3>Code Generation & Review</h3>
+            <p>Claude builds, GPT reviews, Gemini optimizes. Flawless code, every time.</p>
+          </article>
+          <article class="card">
+            <div class="icon"><svg viewBox="0 0 24 24" fill="none"><path d="M11 6a5 5 0 1 0 7 7l3 3-2 2-3-3a5 5 0 0 1-7-7l2 2" stroke="#c084fc" stroke-width="2" stroke-linecap="round"/></svg></div>
+            <h3>Deep Research</h3>
+            <p>Agents spawn sub-agents to scour data and synthesize comprehensive reports in seconds.</p>
+          </article>
+          <article class="card">
+            <div class="icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2c2 0 4 1.6 4 4 0 1-.3 1.8-.9 2.6 1.7.5 2.9 1.8 2.9 3.4 0 2.2-2 4-6 4s-6-1.8-6-4c0-1.6 1.2-2.9 2.9-3.4C8.3 7.8 8 7 8 6c0-2.4 2-4 4-4z" stroke="#22d3ee" stroke-width="2"/></svg></div>
+            <h3>Large Context Analysis</h3>
+            <p>Feed millions of tokens. Our unified memory architecture ensures no detail is lost.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="how" class="section">
+      <div class="wrap">
+        <div class="head center">
+          <h2>How It Works</h2>
+          <p>The anatomy of a multi-agent prompt execution.</p>
+        </div>
+
+        <div class="steps">
+          <div class="steprow">
+            <div class="num">1</div>
+            <div class="stepcopy"><h3>Submit Task</h3><p>You provide the prompt. Core AI analyzes the intent and requirements.</p></div>
+          </div>
+          <div class="steprow">
+            <div class="num">2</div>
+            <div class="stepcopy"><h3>Route to Models</h3><p>The task is split and routed to the most capable frontier models.</p></div>
+          </div>
+          <div class="steprow">
+            <div class="num">3</div>
+            <div class="stepcopy"><h3>Models Collaborate</h3><p>Gemini researches, Claude builds, GPT reviews simultaneously.</p></div>
+          </div>
+          <div class="steprow">
+            <div class="num">4</div>
+            <div class="stepcopy"><h3>Combine Results</h3><p>Outputs are synthesized, resolving conflicts through AI debate.</p></div>
+          </div>
+          <div class="steprow">
+            <div class="num">5</div>
+            <div class="stepcopy"><h3>Optimized Answer</h3><p>You receive a singular, flawless response that no single model could produce.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta2">
+      <div class="wrap center">
+        <h2>Ready to upgrade your intelligence?</h2>
+        <p>Join the top 1% of power users who refuse to compromise. Experience the power of collaborative AI today.</p>
+        <a class="whitebtn" href="chat.html" style="height:64px;padding:0 34px;font-size:20px;font-weight:800">Get Started Now</a>
+      </div>
+    </section>
+
+    <footer>
+      © 2026 Core AI Inc. All rights reserved.
+    </footer>
+  </div>
+</body>
+</html>
