@@ -201,7 +201,7 @@
           <h1>Multiple AIs.<br>One Core Intelligence.</h1>
           <p class="sub">Research with Gemini, build with Claude, reason with GPT, analyze with Kimi — all working together automatically to deliver uncompromising results.</p>
           <div class="cta">
-            <a class="whitebtn" href="chat.html">Start Free
+            <a class="whitebtn" href="signin.html">Start Free
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h12m-5-5 5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
             <a class="outline" href="#features">Explore Features</a>
@@ -315,7 +315,7 @@
       <div class="wrap center">
         <h2>Ready to upgrade your intelligence?</h2>
         <p>Join the top 1% of power users who refuse to compromise. Experience the power of collaborative AI today.</p>
-        <a class="whitebtn" href="chat.html" style="height:64px;padding:0 34px;font-size:20px;font-weight:800">Get Started Now</a>
+        <a class="whitebtn" href="signin.html" style="height:64px;padding:0 34px;font-size:20px;font-weight:800">Get Started Now</a>
       </div>
     </section>
 
@@ -329,12 +329,18 @@
 
     (async () => {
       const session = await window.CoreAuth.getCurrentSession();
-      const getStartedLinks = document.querySelectorAll('a[href="chat.html"]');
-      getStartedLinks.forEach(link => {
+      const startLinks = document.querySelectorAll('a[href="chat.html"], a[href="signin.html"]');
+      startLinks.forEach(link => {
         link.addEventListener("click", (e) => {
-          if (session) return;
+          if (session) {
+            if (link.getAttribute("href") === "signin.html") {
+              e.preventDefault();
+              window.location.href = "chat.html";
+            }
+            return;
+          }
           e.preventDefault();
-          window.location.href = "auth.html";
+          window.location.href = "signin.html";
         });
       });
 
