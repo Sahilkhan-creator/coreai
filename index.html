@@ -323,5 +323,25 @@
       © 2026 Core AI Inc. All rights reserved.
     </footer>
   </div>
+
+  <script type="module">
+    import "./auth.js";
+
+    (async () => {
+      const session = await window.CoreAuth.getCurrentSession();
+      const getStartedLinks = document.querySelectorAll('a[href="chat.html"]');
+      getStartedLinks.forEach(link => {
+        link.addEventListener("click", (e) => {
+          if (session) return;
+          e.preventDefault();
+          window.location.href = "auth.html";
+        });
+      });
+
+      if (session) {
+        window.location.replace("chat.html");
+      }
+    })();
+  </script>
 </body>
 </html>
