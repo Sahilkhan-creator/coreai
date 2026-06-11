@@ -228,5 +228,47 @@
       </div>
     </main>
   </div>
+
+  <script type="module">
+    import "./auth.js";
+
+    const session = await window.CoreAuth.requireAuth("auth.html");
+    const email = session?.user?.email;
+
+    const sbTop = document.querySelector(".sb-top");
+    if (sbTop && email) {
+      const emailEl = document.createElement("div");
+      emailEl.style.cssText = "color:#a1a1aa;font-size:13px;padding:0 2px;word-break:break-word";
+      emailEl.textContent = email;
+      sbTop.appendChild(emailEl);
+    }
+
+    const newChat = document.querySelector(".newchat");
+    if (newChat) {
+      newChat.href = "#";
+      newChat.addEventListener("click", (e) => {
+        e.preventDefault();
+      });
+    }
+
+    const logoutBtn = document.createElement("button");
+    logoutBtn.className = "newchat";
+    logoutBtn.style.marginTop = "10px";
+    logoutBtn.textContent = "Logout";
+    logoutBtn.addEventListener("click", async () => {
+      logoutBtn.disabled = true;
+      logoutBtn.textContent = "Logging out...";
+      const { error } = await window.CoreAuth.signOut();
+      if (error) {
+        logoutBtn.disabled = false;
+        logoutBtn.textContent = "Logout";
+        return;
+      }
+      window.location.replace("index.html");
+    });
+
+    const sbFoot = document.querySelector(".sb-foot");
+    if (sbFoot) sbFoot.insertBefore(logoutBtn, sbFoot.firstChild);
+  </script>
 </body>
 </html>
