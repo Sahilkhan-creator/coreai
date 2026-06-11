@@ -98,12 +98,14 @@
         return { data, error: error?.message || null };
       },
       async signInWithGoogle() {
-        const { data, error } = await client.auth.signInWithOAuth({
-          provider: "google",
-          options: { redirectTo: `${window.location.origin}/chat.html` }
-        });
-        return { data, error: error?.message || null };
-      },
+  const { data, error } = await client.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: "https://sahilkhan-creator.github.io/coreai/chat.html"
+    }
+  });
+  return { data, error: error?.message || null };
+},
       async signOut() {
         const { error } = await client.auth.signOut();
         return { error: error?.message || null };
@@ -112,9 +114,11 @@
     };
 
     (async () => {
-      const session = await window.CoreAuth.getCurrentSession();
-      if (session) window.location.replace("chat.html");
-    })();
+  const session = await window.CoreAuth.getCurrentSession();
+  if (session) {
+    window.location.replace("https://sahilkhan-creator.github.io/coreai/chat.html");
+  }
+})();
 
     const form = document.getElementById("signupForm");
     const msg = document.getElementById("msg");
@@ -153,12 +157,11 @@
       }
 
       if (data?.session) {
-        msg.textContent = "Account created. Redirecting...";
-        msg.className = "msg ok";
-        window.location.href = "chat.html";
-        return;
-      }
-
+  msg.textContent = "Account created. Redirecting...";
+  msg.className = "msg ok";
+  window.location.href = "/coreai/chat.html";
+  return;
+}
       msg.textContent = "Check your email to confirm your account, then sign in.";
       msg.className = "msg ok";
       btn.disabled = false;
