@@ -114,10 +114,9 @@
     };
 
     (async () => {
-      const session = await window.CoreAuth.getCurrentSession();
-      if (session) window.location.replace("chat.html");
-    })();
-
+  const session = await window.CoreAuth.getCurrentSession();
+  if (session) window.location.replace("/coreai/chat.html");
+})();
     const form = document.getElementById("signinForm");
     const msg = document.getElementById("msg");
     const btn = form.querySelector(".btn");
@@ -156,7 +155,7 @@
 
       msg.textContent = "Signed in successfully. Redirecting...";
       msg.className = "msg ok";
-      window.location.href = "chat.html";
+      window.location.href = "/coreai/chat.html";
     });
   </script>
 </body>
