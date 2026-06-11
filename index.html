@@ -145,6 +145,15 @@
     .iconbtn svg{width:18px;height:18px;fill:currentColor}
     .sr{position:absolute;left:-9999px}
 
+    /* Auth loading overlay */
+    #auth-loader{
+      position:fixed;inset:0;background:var(--bg);z-index:9999;
+      display:flex;align-items:center;justify-content:center;
+      transition:opacity .3s ease;
+    }
+    #auth-loader.hidden{opacity:0;pointer-events:none}
+    .loader-spin{width:36px;height:36px;border:3px solid rgba(124,58,237,.25);border-top-color:#7c3aed;border-radius:50%;animation:spin 1s linear infinite}
+
     @keyframes spin{to{transform:rotate(360deg)}}
     @keyframes pulse{50%{opacity:.55}}
     @media (max-width: 920px){
@@ -170,6 +179,9 @@
   </style>
 </head>
 <body>
+  <!-- Auth check loader -->
+  <div id="auth-loader"><div class="loader-spin"></div></div>
+
   <div class="page">
     <div class="noise"></div>
 
@@ -190,8 +202,8 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v18M3 12h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
             Workflow
           </a>
-          <a class="login" href="#login">Log in</a>
-          <a class="whitebtn" href="chat.html">Launch App</a>
+          <a class="login" href="auth.html">Log in</a>
+          <a class="whitebtn get-started-btn" href="auth.html">Launch App</a>
         </div>
       </nav>
 
@@ -201,7 +213,7 @@
           <h1>Multiple AIs.<br>One Core Intelligence.</h1>
           <p class="sub">Research with Gemini, build with Claude, reason with GPT, analyze with Kimi — all working together automatically to deliver uncompromising results.</p>
           <div class="cta">
-            <a class="whitebtn" href="signin.html">Start Free
+            <a class="whitebtn get-started-btn" href="auth.html">Start Free
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h12m-5-5 5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
             <a class="outline" href="#features">Explore Features</a>
@@ -315,7 +327,7 @@
       <div class="wrap center">
         <h2>Ready to upgrade your intelligence?</h2>
         <p>Join the top 1% of power users who refuse to compromise. Experience the power of collaborative AI today.</p>
-        <a class="whitebtn" href="signin.html" style="height:64px;padding:0 34px;font-size:20px;font-weight:800">Get Started Now</a>
+        <a class="whitebtn get-started-btn" href="auth.html" style="height:64px;padding:0 34px;font-size:20px;font-weight:800">Get Started Now</a>
       </div>
     </section>
 
@@ -324,30 +336,36 @@
     </footer>
   </div>
 
-  <script type="module">
-    import "./auth.js";
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = 'https://dazlsbgicighizzpreut.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_xpZ585KJY105smgvDWuwgQ_uX4EMaqu';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    (async () => {
-      const session = await window.CoreAuth.getCurrentSession();
-      const startLinks = document.querySelectorAll('a[href="chat.html"], a[href="signin.html"]');
-      startLinks.forEach(link => {
-        link.addEventListener("click", (e) => {
-          if (session) {
-            if (link.getAttribute("href") === "signin.html") {
-              e.preventDefault();
-              window.location.href = "chat.html";
-            }
-            return;
-          }
+    async function initPage() {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          // Already logged in — send to chat
+          window.location.replace('chat.html');
+          return;
+        }
+      } catch (e) {}
+
+      // Not logged in — show page, wire up buttons
+      document.getElementById('auth-loader').classList.add('hidden');
+
+      document.querySelectorAll('.get-started-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
           e.preventDefault();
-          window.location.href = "signin.html";
+          const { data: { session } } = await supabase.auth.getSession();
+          window.location.href = session ? 'chat.html' : 'auth.html';
         });
       });
+    }
 
-      if (session) {
-        window.location.replace("chat.html");
-      }
-    })();
+    initPage();
   </script>
 </body>
 </html>
