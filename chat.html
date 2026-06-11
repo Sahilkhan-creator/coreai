@@ -529,9 +529,9 @@
     async function boot() {
       const { data: { session } } = await client.auth.getSession();
       if (!session) {
-        window.location.replace("auth.html");
-        return;
-      }
+  window.location.replace("/coreai/auth.html");
+  return;
+}
       state.session = session;
       state.user = session.user;
       renderUser();
