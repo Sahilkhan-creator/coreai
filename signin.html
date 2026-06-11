@@ -28,6 +28,14 @@
     input:focus{border-color:rgba(124,58,237,.45)}
     .btn{width:100%;height:52px;border:0;border-radius:14px;margin-top:18px;background:linear-gradient(135deg,var(--violet),var(--blue));color:#fff;font-weight:800;font-size:15px;cursor:pointer}
     .btn:disabled{opacity:.7;cursor:not-allowed}
+    .google{
+      width:100%;height:52px;border-radius:14px;border:1px solid var(--border);
+      background:rgba(255,255,255,.04);color:#fff;font-weight:700;font-size:15px;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px
+    }
+    .google:hover{background:rgba(255,255,255,.07)}
+    .divider{display:flex;align-items:center;gap:12px;margin:16px 0;color:var(--muted);font-size:12px}
+    .divider:before,.divider:after{content:"";flex:1;height:1px;background:var(--border)}
     .alt{margin-top:18px;text-align:center;color:var(--muted)}
     .alt a{color:#c4b5fd;font-weight:700}
     .msg{margin-top:14px;font-size:14px;min-height:20px;color:#fca5a5}
@@ -47,7 +55,13 @@
       </a>
 
       <h1>Sign in</h1>
-      <p>Use your email and password to access Core AI.</p>
+      <p>Use your email and password or continue with Google.</p>
+
+      <button class="google" type="button" id="googleBtn">
+        <span>Continue with Google</span>
+      </button>
+
+      <div class="divider">OR</div>
 
       <label for="email">Email</label>
       <input id="email" type="email" autocomplete="email" required />
@@ -67,8 +81,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const SUPABASE_URL = "https://dazlsbgicighizzpreut.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_xpZ585KJY105smgvDWuwgQ_uX4EMaqu";
-
+    const SUPABASE_ANON_KEY = "issb_publishable_xpZ585KJY105smgvDWuwgQ_uX4EMaqu";
     const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     window.CoreAuth = {
@@ -82,6 +95,13 @@
       },
       async signUp(email, password) {
         const { data, error } = await client.auth.signUp({ email, password });
+        return { data, error: error?.message || null };
+      },
+      async signInWithGoogle() {
+        const { data, error } = await client.auth.signInWithOAuth({
+          provider: "google",
+          options: { redirectTo: `${window.location.origin}/chat.html` }
+        });
         return { data, error: error?.message || null };
       },
       async signOut() {
@@ -98,7 +118,20 @@
 
     const form = document.getElementById("signinForm");
     const msg = document.getElementById("msg");
-    const btn = form.querySelector("button");
+    const btn = form.querySelector(".btn");
+    const googleBtn = document.getElementById("googleBtn");
+
+    googleBtn.addEventListener("click", async () => {
+      msg.textContent = "";
+      googleBtn.disabled = true;
+      googleBtn.textContent = "Redirecting to Google...";
+      const { error } = await window.CoreAuth.signInWithGoogle();
+      if (error) {
+        msg.textContent = error;
+        googleBtn.disabled = false;
+        googleBtn.innerHTML = "<span>Continue with Google</span>";
+      }
+    });
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
