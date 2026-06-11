@@ -98,12 +98,14 @@
         return { data, error: error?.message || null };
       },
       async signInWithGoogle() {
-        const { data, error } = await client.auth.signInWithOAuth({
-          provider: "google",
-          options: { redirectTo: `${window.location.origin}/chat.html` }
-        });
-        return { data, error: error?.message || null };
-      },
+  const { data, error } = await client.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: "https://sahilkhan-creator.github.io/coreai/chat.html"
+    }
+  });
+  return { data, error: error?.message || null };
+},
       async signOut() {
         const { error } = await client.auth.signOut();
         return { error: error?.message || null };
