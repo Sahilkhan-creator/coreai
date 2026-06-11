@@ -529,7 +529,7 @@
     async function boot() {
       const { data: { session } } = await client.auth.getSession();
       if (!session) {
-  window.location.replace("/coreai/auth.html");
+ window.location.replace("chat.html");
   return;
 }
       state.session = session;
